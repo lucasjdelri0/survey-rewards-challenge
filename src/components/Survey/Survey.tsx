@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, message, Steps } from "antd";
 import { SurveyProps } from "./Survey.props";
 import "./Survey.css";
@@ -17,6 +17,18 @@ export const Survey = (props: SurveyProps) => {
     setCurrent(current - 1);
   };
 
+  useEffect(() => {
+    if (current < questions.length) {
+      const timer = setTimeout(
+        () => next(),
+        questions[current].lifetimeSeconds * 1000
+      );
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [current, questions]);
+
   return (
     <>
       <Steps current={current}>
@@ -25,7 +37,9 @@ export const Survey = (props: SurveyProps) => {
         ))}
       </Steps>
       <div className="steps-content" style={{ color: "black" }}>
-        {questions[current].text}
+        {current >= questions.length
+          ? "Survey Overview Papi"
+          : questions[current].text}
       </div>
       <div className="steps-action">
         {current < questions.length - 1 && (
@@ -41,7 +55,7 @@ export const Survey = (props: SurveyProps) => {
             Done
           </Button>
         )}
-        {current > 0 && (
+        {current > 0 && current < questions.length && (
           <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
             Previous
           </Button>
