@@ -9,15 +9,19 @@ import {
 } from "antd";
 import { SurveyProps } from "./Survey.props";
 import "./Survey.css";
+import { useMetaMaskAccount } from "providers/MetaMaskProvider";
 
 const { Step } = Steps;
 const { Title } = Typography;
 
-export const Survey = (props: SurveyProps) => {
+export const Survey: React.FC<SurveyProps> = ({
+  dataSource,
+  isLoading = false,
+  onSubmit,
+}) => {
   const [current, setCurrent] = useState(0);
   const [value, setValue] = useState(0);
   const [answerIds, setAnswerIds] = useState<number[]>([]);
-  const { dataSource, onSubmit } = props;
   const { id: surveyId, questions } = dataSource;
 
   const currentQuestion = questions.find(({ id }) => id === current);
@@ -74,6 +78,7 @@ export const Survey = (props: SurveyProps) => {
             })}
             <Button
               type="primary"
+              loading={isLoading}
               onClick={() => onSubmit && onSubmit(surveyId, answerIds)}
               style={{ width: "100%" }}
             >

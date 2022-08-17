@@ -6,28 +6,32 @@ import { useMetaMaskAccount } from "providers/MetaMaskProvider";
 import surveySamples from "utils/survey-sample.json";
 import "./App.css";
 import { Survey as TSurvey } from "components/Survey/Survey.props";
+import { getQuizContract } from "utils/contractHelpers";
 
 const { Text, Title } = Typography;
-
 const randomSurvey: TSurvey =
   surveySamples[Math.floor(Math.random() * surveySamples.length)];
 
 const App = () => {
-  const { connectedAccount } = useMetaMaskAccount();
-  const [surveyStarted, setSurveyStarted] = useState(false);
+  const { connectedAccount, provider } = useMetaMaskAccount();
+  const [surveyInProgress, setSurveyInProgress] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (surveyId: number, answerIds: number[]) => {
-    message.success(
-      <Space direction="vertical">
-        <Text>Survey successfully submited</Text>
-        <Text>
-          {JSON.stringify({
-            surveyId,
-            answerIds,
-          })}
-        </Text>
-      </Space>
-    );
+  const quizContract = getQuizContract(provider?.getSigner());
+
+  const handleSubmit = async (surveyId: number, answerIds: number[]) => {
+    setIsSubmitting(true);
+    try {
+      const tx = await quizContract.submit(surveyId, answerIds);
+      await tx.wait();
+      message.success("Your answers were successfully submited", 3, () => {
+        setSurveyInProgress(false);
+      });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -40,17 +44,16 @@ const App = () => {
         </div>
       ) : (
         <div className="App-content">
-          {!surveyStarted ? (
+          {!surveyInProgress ? (
             <Space direction="vertical" size="middle">
               <Title level={2} style={{ marginBottom: 4, textAlign: "center" }}>
                 Daily Trivia
               </Title>
               <Text>{randomSurvey.title}</Text>
               <Image width="40vmin" src={randomSurvey.image} preview={false} />
-              {/* <img src={randomSurvey.image} className="App-logo" alt="logo" /> */}
               <Button
                 type="primary"
-                onClick={() => setSurveyStarted(!surveyStarted)}
+                onClick={() => setSurveyInProgress(true)}
                 style={{ flex: 1 }}
               >
                 Start Survey
@@ -59,6 +62,7 @@ const App = () => {
           ) : (
             <Survey
               dataSource={randomSurvey}
+              isLoading={isSubmitting}
               onSubmit={(surveyId, answerIds) =>
                 handleSubmit(surveyId, answerIds)
               }

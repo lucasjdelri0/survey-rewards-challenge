@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
 import {
   Layout,
   Space,
@@ -19,21 +21,40 @@ import {
 } from "@ant-design/icons";
 import { useMetaMaskAccount } from "providers/MetaMaskProvider";
 import { roundToTwo, shortenAddress } from "utils";
+import { getQuizContract } from "utils/contractHelpers";
 import { HeaderProps } from "./Header.props";
 import "./Header.css";
 
 const { Header: AntHeader } = Layout;
-const { Link: AntLink } = Typography;
+const { Link: AntLink, Title } = Typography;
 
 export const Header = (props: HeaderProps): JSX.Element => {
+  const [quizBalance, setQuizBalance] = useState<string | undefined>();
   const { backgroundColor, repoHref, avatarImageSrc } = props;
   const {
     connectedAccount,
     connectAccount,
     isWrongNetwork,
     switchToRopsten,
-    accountBalance,
+    ethBalance,
+    provider,
   } = useMetaMaskAccount();
+
+  const signer = provider?.getSigner();
+  const quizContract = getQuizContract(signer);
+
+  useEffect(() => {
+    const getContractInfo = async () => {
+      const symbol = await quizContract.symbol();
+      const balanceBN = await quizContract.balanceOf(connectedAccount);
+      const balance = ethers.utils.formatEther(balanceBN);
+      setQuizBalance(`${balance} ${symbol}`);
+    };
+
+    if (!quizBalance) {
+      getContractInfo();
+    }
+  }, [connectedAccount, quizContract, quizBalance]);
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     message.info("Click on menu item");
@@ -44,7 +65,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
       onClick={handleMenuClick}
       items={[
         {
-          label: `Balance: ${roundToTwo(accountBalance)} rETH`,
+          label: `Balance: ${roundToTwo(ethBalance)} rETH`,
           key: "0",
           icon: <SketchOutlined />,
         },
@@ -73,13 +94,18 @@ export const Header = (props: HeaderProps): JSX.Element => {
           <GithubOutlined className="headerLogo" />
         </AntLink>
       )}
-      <Space align="center">
+      <Space align="center" size="large">
         {!connectedAccount ? (
           <Button type="primary" onClick={connectAccount}>
             Connect Wallet
           </Button>
         ) : (
           <>
+            {quizBalance && (
+              <Title level={5} style={{ whiteSpace: "nowrap", margin: 0 }}>
+                {quizBalance}
+              </Title>
+            )}
             {avatarImageSrc && <Avatar src={avatarImageSrc} />}
             <Dropdown.Button
               overlay={menu}

@@ -20,5 +20,6 @@ export type Survey = {
 
 export interface SurveyProps {
   dataSource: Survey;
+  isLoading?: boolean;
   onSubmit?: (surveyId: number, answerIds: number[]) => void;
 }

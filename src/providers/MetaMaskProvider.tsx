@@ -12,7 +12,7 @@ type MetaMaskContextTypes = {
   ethereum: any;
   isWrongNetwork: boolean;
   connectedAccount: string;
-  accountBalance: string | undefined;
+  ethBalance: string | undefined;
   provider: ethers.providers.Web3Provider | undefined;
   switchToRopsten: () => void;
   connectAccount: () => void;
@@ -25,7 +25,7 @@ const MetaMaskAccountContext = createContext<MetaMaskContextTypes>({
   ethereum: null,
   isWrongNetwork: false,
   connectedAccount: "",
-  accountBalance: "",
+  ethBalance: "",
   provider: undefined,
   switchToRopsten: () => {},
   connectAccount: () => {},
@@ -43,8 +43,8 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
   const [isWrongNetwork, setIsWrongNetwork] = useState<boolean>(false);
   const [connectedAccount, setConnectedAccount] =
     useState<MetaMaskContextTypes["connectedAccount"]>("");
-  const [balance, setBalance] =
-    useState<MetaMaskContextTypes["accountBalance"]>();
+  const [ethBalance, setEthBalance] =
+    useState<MetaMaskContextTypes["ethBalance"]>();
 
   useEffect(() => {
     const listenChainChanges = () => {
@@ -94,7 +94,7 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
       if (!web3Provider || !connectedAccount) return;
       const signer = web3Provider.getSigner();
       const ethBalance = await signer.getBalance();
-      setBalance(ethers.utils.formatEther(ethBalance));
+      setEthBalance(ethers.utils.formatEther(ethBalance));
     };
 
     getAccountBalance();
@@ -135,7 +135,7 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
     ethereum: ethereum,
     isWrongNetwork,
     connectedAccount,
-    accountBalance: balance,
+    ethBalance,
     provider: web3Provider,
     switchToRopsten,
     connectAccount,
