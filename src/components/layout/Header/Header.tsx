@@ -13,13 +13,12 @@ import {
 import {
   GithubOutlined,
   WalletOutlined,
-  LogoutOutlined,
   WarningOutlined,
   CopyOutlined,
   SketchOutlined,
 } from "@ant-design/icons";
 import { useMetaMaskAccount } from "providers/MetaMaskProvider";
-import { shortenAddress } from "utils";
+import { roundToTwo, shortenAddress } from "utils";
 import { HeaderProps } from "./Header.props";
 import "./Header.css";
 
@@ -37,7 +36,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
   } = useMetaMaskAccount();
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
-    message.info("Click on menu item.");
+    message.info("Click on menu item");
   };
 
   const menu = (
@@ -45,7 +44,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
       onClick={handleMenuClick}
       items={[
         {
-          label: `Balance: ${accountBalance} rETH`,
+          label: `Balance: ${roundToTwo(accountBalance)} rETH`,
           key: "0",
           icon: <SketchOutlined />,
         },
@@ -53,11 +52,6 @@ export const Header = (props: HeaderProps): JSX.Element => {
           label: "Copy wallet address",
           key: "1",
           icon: <CopyOutlined />,
-        },
-        {
-          label: "Disconnect",
-          key: "2",
-          icon: <LogoutOutlined />,
         },
       ]}
     />

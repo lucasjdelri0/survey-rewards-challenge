@@ -9,3 +9,10 @@ export const shortenAddress = (address: string, chars = 4): string => {
     42 - chars
   )}`;
 };
+
+export const roundToTwo = (num: number | string | undefined) => {
+  if (!num) {
+    return;
+  }
+  return Math.round((+num + Number.EPSILON) * 100) / 100;
+};

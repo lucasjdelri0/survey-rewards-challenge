@@ -2,6 +2,7 @@ import { Breadcrumb, Layout } from "antd";
 import Header from "components/layout/Header";
 import { PageProps } from "./Page.props";
 import "./Page.css";
+import { HomeOutlined } from "@ant-design/icons";
 
 const { Content, Footer } = Layout;
 
@@ -17,9 +18,9 @@ export const Page = (props: PageProps): JSX.Element => (
       style={{ padding: "0 50px", marginTop: 64 }}
     >
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>List</Breadcrumb.Item>
-        <Breadcrumb.Item>App</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <HomeOutlined /> <span>Home</span>
+        </Breadcrumb.Item>
       </Breadcrumb>
       <div className="site-layout-background" style={{ padding: 24 }}>
         {props.children}
