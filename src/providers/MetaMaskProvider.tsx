@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   ReactNode,
   useContext,
@@ -47,55 +47,64 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
     useState<MetaMaskContextTypes["accountBalance"]>();
 
   useEffect(() => {
+    const listenChainChanges = () => {
+      const handleChainChanged = () => window.location.reload();
+      ethereum.on("chainChanged", handleChainChanged);
+    };
+
     listenChainChanges();
-    listenAccountChanges();
-    initializeProvider();
-  }, []);
+  }, [ethereum]);
 
   useEffect(() => {
+    const listenAccountChanges = () => {
+      const handleAccountsChanged = () => window.location.reload();
+      ethereum.on("accountsChanged", handleAccountsChanged);
+    };
+
+    listenAccountChanges();
+  }, [ethereum]);
+
+  useEffect(() => {
+    const getConnectedAccount = async () => {
+      const accounts = await ethereum.request({ method: "eth_accounts" });
+      if (accounts && Array.isArray(accounts)) {
+        handleAccounts(accounts);
+      }
+    };
+
+    const initializeProvider = async () => {
+      if (!ethereum) {
+        message.info("Make sure you have Metamask installed!");
+        return;
+      }
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      setWeb3Provider(provider);
+      const chainId = await ethereum.request({ method: "eth_chainId" });
+      if (chainId !== ropstenChainId) {
+        setIsWrongNetwork(true);
+      }
+      getConnectedAccount();
+    };
+
+    initializeProvider();
+  }, [ethereum]);
+
+  useEffect(() => {
+    const getAccountBalance = async () => {
+      if (!web3Provider || !connectedAccount) return;
+      const signer = web3Provider.getSigner();
+      const ethBalance = await signer.getBalance();
+      setBalance(ethers.utils.formatEther(ethBalance));
+    };
+
     getAccountBalance();
   }, [web3Provider, connectedAccount]);
-
-  const listenChainChanges = () => {
-    const handleChainChanged = () => window.location.reload();
-    ethereum.on("chainChanged", handleChainChanged);
-  };
-
-  const listenAccountChanges = () => {
-    const handleAccountsChanged = () => window.location.reload();
-    ethereum.on("accountsChanged", handleAccountsChanged);
-  };
-
-  const initializeProvider = async () => {
-    if (!ethereum) {
-      message.info("Make sure you have Metamask installed!");
-      return;
-    }
-
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    setWeb3Provider(provider);
-
-    const chainId = await ethereum.request({ method: "eth_chainId" });
-    if (chainId !== ropstenChainId) {
-      setIsWrongNetwork(true);
-    }
-
-    getConnectedAccount();
-  };
 
   const handleAccounts = (accounts: string[]) => {
     if (accounts.length > 0) {
       setConnectedAccount(accounts[0]);
     } else {
       message.error("No authorized accounts yet");
-    }
-  };
-
-  const getConnectedAccount = async () => {
-    const accounts = await ethereum.request({ method: "eth_accounts" });
-    console.log(`accounts`, accounts);
-    if (accounts && Array.isArray(accounts)) {
-      handleAccounts(accounts);
     }
   };
 
@@ -120,13 +129,6 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
       method: "wallet_switchEthereumChain",
       params: [{ chainId: ropstenChainId }],
     });
-  };
-
-  const getAccountBalance = async () => {
-    if (!web3Provider || !connectedAccount) return;
-    const signer = web3Provider.getSigner();
-    const ethBalance = await signer.getBalance();
-    setBalance(ethers.utils.formatEther(ethBalance));
   };
 
   const value = {

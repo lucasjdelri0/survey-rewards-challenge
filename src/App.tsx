@@ -1,33 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "antd";
-import { BigNumber, ethers } from "ethers";
+import { useState } from "react";
+import { Button, Space, Typography, Image, message } from "antd";
 import Page from "components/layout/Page";
 import Survey from "components/Survey";
 import { useMetaMaskAccount } from "providers/MetaMaskProvider";
-import { getQuizContract } from "utils/contractHelpers";
 import surveySamples from "utils/survey-sample.json";
 import "./App.css";
 import { Survey as TSurvey } from "components/Survey/Survey.props";
 
+const { Text, Title } = Typography;
+
+const randomSurvey: TSurvey =
+  surveySamples[Math.floor(Math.random() * surveySamples.length)];
+
 const App = () => {
+  const { connectedAccount } = useMetaMaskAccount();
   const [surveyStarted, setSurveyStarted] = useState(false);
-  const { connectedAccount, provider } = useMetaMaskAccount();
-  const dailySurvey: TSurvey =
-    surveySamples[Math.floor(Math.random() * surveySamples.length)];
 
-  useEffect(() => {
-    const getContractInfo = async () => {
-      const quizContract = getQuizContract(provider);
-      const symbol = await quizContract.symbol();
-      const balanceBN = await quizContract.balanceOf(connectedAccount);
-      const balance = ethers.utils.formatEther(balanceBN);
-      console.log("balance", balance);
-    };
-
-    if (provider && connectedAccount) {
-      getContractInfo();
-    }
-  }, [connectedAccount, provider]);
+  const handleSubmit = (surveyId: number, answerIds: number[]) => {
+    message.success(
+      <Space direction="vertical">
+        <Text>Survey successfully submited</Text>
+        <Text>
+          {JSON.stringify({
+            surveyId,
+            answerIds,
+          })}
+        </Text>
+      </Space>
+    );
+  };
 
   return (
     <Page>
@@ -40,18 +41,28 @@ const App = () => {
       ) : (
         <div className="App-content">
           {!surveyStarted ? (
-            <>
-              <img src={dailySurvey.image} className="App-logo" alt="logo" />
-              <p style={{ color: "black" }}>{dailySurvey.title}</p>
+            <Space direction="vertical" size="middle">
+              <Title level={2} style={{ marginBottom: 4, textAlign: "center" }}>
+                Daily Trivia
+              </Title>
+              <Text>{randomSurvey.title}</Text>
+              <Image width="40vmin" src={randomSurvey.image} preview={false} />
+              {/* <img src={randomSurvey.image} className="App-logo" alt="logo" /> */}
               <Button
                 type="primary"
                 onClick={() => setSurveyStarted(!surveyStarted)}
+                style={{ flex: 1 }}
               >
                 Start Survey
               </Button>
-            </>
+            </Space>
           ) : (
-            <Survey dataSource={dailySurvey} />
+            <Survey
+              dataSource={randomSurvey}
+              onSubmit={(surveyId, answerIds) =>
+                handleSubmit(surveyId, answerIds)
+              }
+            />
           )}
         </div>
       )}

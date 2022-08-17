@@ -1,4 +1,3 @@
-import React from "react";
 import { Breadcrumb, Layout } from "antd";
 import Header from "components/layout/Header";
 import { PageProps } from "./Page.props";
@@ -22,10 +21,7 @@ export const Page = (props: PageProps): JSX.Element => (
         <Breadcrumb.Item>List</Breadcrumb.Item>
         <Breadcrumb.Item>App</Breadcrumb.Item>
       </Breadcrumb>
-      <div
-        className="site-layout-background"
-        style={{ padding: 24, minHeight: 380 }}
-      >
+      <div className="site-layout-background" style={{ padding: 24 }}>
         {props.children}
       </div>
     </Content>
