@@ -4,6 +4,7 @@ module.exports = {
     es2021: true,
     jest: true,
   },
+  parser: '@typescript-eslint/parser',
   settings: {
     react: {
       version: 'detect',
