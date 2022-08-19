@@ -7,14 +7,12 @@ import {
   Avatar,
   Typography,
   Dropdown,
-  MenuProps,
   message,
 } from 'antd'
 import {
   GithubOutlined,
   WalletOutlined,
   WarningOutlined,
-  CopyOutlined,
   SketchOutlined,
 } from '@ant-design/icons'
 import { useMetaMaskAccount } from 'providers/MetaMaskProvider'
