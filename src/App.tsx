@@ -1,30 +1,72 @@
-import React from "react";
-import { Button } from "antd";
-import Page from "components/layout/Page";
-import { useMetaMaskAccount } from "providers/MetaMaskProvider";
-import logo from "./logo.svg";
-import "./App.css";
+import { useState } from 'react'
+import { message } from 'antd'
+import Page from 'components/layout/Page'
+import DailySurvey from 'components/survey/DailySurvey'
+import { useMetaMaskAccount } from 'providers/MetaMaskProvider'
+import surveySamples from 'utils/survey-sample.json'
+import { getQuizContract } from 'utils/contractHelpers'
+import { getRpcErrorMsg } from 'utils'
+import SurveyIntro from 'components/survey/SurveyIntro'
+import { Survey } from 'components/survey/types'
+import './App.css'
+import Disconnected from 'components/Disconnected'
 
-const App = () => {
-  const { connectedAccount } = useMetaMaskAccount();
+const randomSurvey: Survey =
+  surveySamples[Math.floor(Math.random() * surveySamples.length)]
+
+const App = (): JSX.Element => {
+  const { connectedAccount, provider } = useMetaMaskAccount()
+  const [surveyInProgress, setSurveyInProgress] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const quizContract = getQuizContract(provider?.getSigner())
+
+  const handleSubmit = async (
+    surveyId: number,
+    answerIds: number[]
+  ): Promise<void> => {
+    setIsSubmitting(true)
+    try {
+      const tx = await quizContract.submit(surveyId, answerIds)
+      await tx.wait()
+      await message.success(
+        'Your survey was sent successfully. You´ve been rewarded with 1 QUIZ.',
+        3,
+        () => {
+          setSurveyInProgress(false)
+        }
+      )
+    } catch (e) {
+      await message.error(getRpcErrorMsg(e), 3)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <Page>
       {!connectedAccount ? (
-        <div className="App-content">
-          <p style={{ color: "black" }}>
-            Connect your wallet to see the magic!!!
-          </p>
-        </div>
+        <Disconnected />
       ) : (
-        <div className="App-content">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p style={{ color: "black" }}>Survey Challenge by Lucas Del Rio</p>
-          <Button type="primary">Start</Button>
+        <div className='App-content'>
+          {!surveyInProgress ? (
+            <SurveyIntro
+              survey={randomSurvey}
+              onStart={() => setSurveyInProgress(true)}
+            />
+          ) : (
+            <DailySurvey
+              dataSource={randomSurvey}
+              isLoading={isSubmitting}
+              onSubmit={async (surveyId, answerIds) =>
+                await handleSubmit(surveyId, answerIds)
+              }
+            />
+          )}
         </div>
       )}
     </Page>
-  );
-};
+  )
+}
 
-export default App;
+export default App

@@ -1,0 +1,223 @@
+[
+  {
+    "id": 0,
+    "title": "Personal preferences",
+    "image": "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
+    "questions": [
+      {
+        "id": 0,
+        "text": "Color preferido",
+        "image": "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
+        "lifetimeSeconds": 9,
+        "options": [
+          {
+            "id": 0,
+            "text": "Rojo"
+          },
+          {
+            "id": 1,
+            "text": "Azul"
+          },
+          {
+            "id": 2,
+            "text": "Amarillo"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "text": "Fruta preferida",
+        "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+        "lifetimeSeconds": 13,
+        "options": [
+          {
+            "id": 0,
+            "text": "Naranja"
+          },
+          {
+            "id": 1,
+            "text": "Banana"
+          },
+          {
+            "id": 2,
+            "text": "Manzana"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "text": "Animal preferido",
+        "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+        "lifetimeSeconds": 5,
+        "options": [
+          {
+            "id": 0,
+            "text": "Tigre"
+          },
+          {
+            "id": 1,
+            "text": "Leon"
+          },
+          {
+            "id": 2,
+            "text": "Cocodrilo"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "text": "Sabor de helado",
+        "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+        "lifetimeSeconds": 5,
+        "options": [
+          {
+            "id": 0,
+            "text": "Granizado"
+          },
+          {
+            "id": 1,
+            "text": "Tramontana"
+          },
+          {
+            "id": 2,
+            "text": "Mascarpone"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "title": "Development tools",
+    "image": "https://48tools.com/wp-content/uploads/2015/09/shortlink.png",
+    "questions": [
+      {
+        "id": 0,
+        "text": "Framework preferido",
+        "image": "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
+        "lifetimeSeconds": 12,
+        "options": [
+          {
+            "id": 0,
+            "text": "Flutter"
+          },
+          {
+            "id": 1,
+            "text": "React Js"
+          },
+          {
+            "id": 2,
+            "text": "Angular"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "text": "State management",
+        "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+        "lifetimeSeconds": 6,
+        "options": [
+          {
+            "id": 0,
+            "text": "Redux"
+          },
+          {
+            "id": 1,
+            "text": "Mobx"
+          },
+          {
+            "id": 2,
+            "text": "Vuex"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "text": "Git tool",
+        "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+        "lifetimeSeconds": 8,
+        "options": [
+          {
+            "id": 0,
+            "text": "Github"
+          },
+          {
+            "id": 1,
+            "text": "Git Cracken"
+          },
+          {
+            "id": 2,
+            "text": "Sourcetree"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Sport team/players",
+    "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+    "questions": [
+      {
+        "id": 0,
+        "text": "Futbol team",
+        "image": "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
+        "lifetimeSeconds": 8,
+        "options": [
+          {
+            "id": 0,
+            "text": "Taiere de Córdoba"
+          },
+          {
+            "id": 1,
+            "text": "River Plate"
+          },
+          {
+            "id": 2,
+            "text": "Boca Juniors"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "text": "Basketball team",
+        "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+        "lifetimeSeconds": 12,
+        "options": [
+          {
+            "id": 0,
+            "text": "San Antonio Spurs"
+          },
+          {
+            "id": 1,
+            "text": "Chicago Bulls"
+          },
+          {
+            "id": 2,
+            "text": "Orlando Magic"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "text": "Tenis player",
+        "image": "https://filedn.com/ltOdFv1aqz1YIFhf4gTY8D7/ingus-info/BLOGS/Photography-stocks3/stock-photography-slider.jpg",
+        "lifetimeSeconds": 6,
+        "options": [
+          {
+            "id": 0,
+            "text": "Federer"
+          },
+          {
+            "id": 1,
+            "text": "Nadal"
+          },
+          {
+            "id": 2,
+            "text": "Schwartzman"
+          }
+        ]
+      }
+    ]
+  }
+]
