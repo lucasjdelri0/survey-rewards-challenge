@@ -1,5 +1,5 @@
 import { RadioChangeEvent } from 'antd'
-import { Question } from 'components/survey/types'
+import { Question } from 'components/types'
 
 export interface SurveyQuestionProps {
   question?: Question
