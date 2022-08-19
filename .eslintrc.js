@@ -25,6 +25,7 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
     quotes: 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/no-floating-promises': 'warn',

@@ -18,7 +18,6 @@ interface MetaMaskContextTypes {
   connectAccount: () => void
 }
 
-// See chain ids <https://docs.metamask.io/guide/ethereum-provider.html#chain-ids>
 const ropstenChainId = '0x3'
 
 const MetaMaskAccountContext = createContext<MetaMaskContextTypes>({
@@ -48,14 +47,14 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps): JSX.Element => {
 
   useEffect(() => {
     const listenChainChanges = (): void =>
-      ethereum.on('chainChanged', window.location.reload())
+      ethereum.on('chainChanged', () => window.location.reload())
 
     listenChainChanges()
   }, [ethereum])
 
   useEffect(() => {
     const listenAccountChanges = (): void =>
-      ethereum.on('accountsChanged', window.location.reload())
+      ethereum.on('accountsChanged', () => window.location.reload())
 
     listenAccountChanges()
   }, [ethereum])
@@ -73,13 +72,15 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps): JSX.Element => {
         await message.info('Make sure you have Metamask installed!', 3)
         return
       }
-      const provider = new ethers.providers.Web3Provider(ethereum)
-      setWeb3Provider(provider)
-      const chainId = await ethereum.request({ method: 'eth_chainId' })
-      if (chainId !== ropstenChainId) {
-        setIsWrongNetwork(true)
-      }
-      await getConnectedAccount()
+      try {
+        const provider = new ethers.providers.Web3Provider(ethereum)
+        setWeb3Provider(provider)
+        const chainId = await ethereum.request({ method: 'eth_chainId' })
+        if (chainId !== ropstenChainId) {
+          setIsWrongNetwork(true)
+        }
+        await getConnectedAccount()
+      } catch (e) {}
     }
 
     initializeProvider()
@@ -88,9 +89,11 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps): JSX.Element => {
   useEffect(() => {
     const getAccountBalance = async (): Promise<void> => {
       if (!web3Provider || !connectedAccount) return
-      const signer = web3Provider.getSigner()
-      const ethBalance = await signer.getBalance()
-      setEthBalance(ethers.utils.formatEther(ethBalance))
+      try {
+        const signer = web3Provider.getSigner()
+        const ethBalance = await signer.getBalance()
+        setEthBalance(ethers.utils.formatEther(ethBalance))
+      } catch (e) {}
     }
 
     getAccountBalance()

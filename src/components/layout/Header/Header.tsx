@@ -4,13 +4,11 @@ import {
   Layout,
   Space,
   Menu,
-  Button,
   Avatar,
   Typography,
   Dropdown,
   MenuProps,
   message,
-  Tooltip,
 } from 'antd'
 import {
   GithubOutlined,
@@ -20,7 +18,9 @@ import {
   SketchOutlined,
 } from '@ant-design/icons'
 import { useMetaMaskAccount } from 'providers/MetaMaskProvider'
-import { roundToTwo, shortenAddress } from 'utils'
+import { getRpcErrorMsg, roundToTwo, shortenAddress } from 'utils'
+import ConnectWallet from 'components/ConnectWallet'
+import SwitchNetwork from 'components/SwitchNetwork'
 import { getQuizContract } from 'utils/contractHelpers'
 import { HeaderProps } from './Header.props'
 import './Header.css'
@@ -50,16 +50,17 @@ export const Header = (props: HeaderProps): JSX.Element => {
         const balanceBN = await quizContract.balanceOf(connectedAccount)
         const balance = ethers.utils.formatEther(balanceBN)
         setQuizBalance(`${balance} ${symbol}`)
-      } catch (e) {}
+        console.log('quizBalance', quizBalance)
+      } catch (e) {
+        await message.error(getRpcErrorMsg(e), 3)
+      }
     }
 
-    if (quizBalance == null) {
-      void getContractInfo()
-    }
-  }, [connectedAccount, quizContract, quizBalance])
+    if (connectedAccount && quizContract) getContractInfo()
+  }, [connectedAccount, quizContract])
 
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
-    message.info('Click on menu item')
+  const handleMenuClick: MenuProps['onClick'] = async (e) => {
+    await message.info('Click on menu item')
   }
 
   const menu = (
@@ -84,11 +85,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
     <AntHeader
       className='headerContainer'
       style={{
-        position: 'fixed',
-        zIndex: 1,
-        width: '100%',
         backgroundColor,
-        padding: '0 50px',
       }}
     >
       {repoHref && (
@@ -98,9 +95,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
       )}
       <Space align='center' size='large'>
         {!connectedAccount ? (
-          <Button type='primary' onClick={connectAccount}>
-            Connect Wallet
-          </Button>
+          <ConnectWallet onClick={connectAccount} />
         ) : (
           <>
             {quizBalance && (
@@ -118,15 +113,11 @@ export const Header = (props: HeaderProps): JSX.Element => {
               {shortenAddress(connectedAccount)}
             </Dropdown.Button>
             {isWrongNetwork && (
-              <Tooltip title='You’re connected to the wrong network'>
-                <Button
-                  type='primary'
-                  shape='circle'
-                  danger
-                  icon={<WarningOutlined />}
-                  onClick={switchToRopsten}
-                />
-              </Tooltip>
+              <SwitchNetwork
+                tooltip='You’re connected to the wrong network'
+                icon={<WarningOutlined />}
+                onClick={switchToRopsten}
+              />
             )}
           </>
         )}

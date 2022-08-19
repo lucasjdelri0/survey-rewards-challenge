@@ -1,4 +1,5 @@
 import { isAddress } from 'ethers/lib/utils'
+import { getMessageFromCode, serializeError } from 'eth-rpc-errors'
 
 export const shortenAddress = (address: string, chars = 4): string => {
   const isValidAddress = isAddress(address)
@@ -13,4 +14,9 @@ export const roundToTwo = (num: number | string | null): number | undefined => {
     return
   }
   return Math.round((+num + Number.EPSILON) * 100) / 100
+}
+
+export const getRpcErrorMsg = (e: unknown): string => {
+  const serializedError = serializeError(e)
+  return getMessageFromCode(serializedError.code)
 }

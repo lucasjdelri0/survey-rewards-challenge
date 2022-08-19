@@ -1,15 +1,17 @@
 import { useState } from 'react'
-import { Button, Space, Typography, Image, message } from 'antd'
+import { message } from 'antd'
 import Page from 'components/layout/Page'
-import Survey from 'components/Survey'
+import DailySurvey from 'components/survey/DailySurvey'
 import { useMetaMaskAccount } from 'providers/MetaMaskProvider'
 import surveySamples from 'utils/survey-sample.json'
-import './App.css'
-import { Survey as TSurvey } from 'components/Survey/Survey.props'
 import { getQuizContract } from 'utils/contractHelpers'
+import { getRpcErrorMsg } from 'utils'
+import SurveyIntro from 'components/survey/SurveyIntro'
+import { Survey } from 'components/survey/types'
+import './App.css'
+import Disconnected from 'components/Disconnected'
 
-const { Text, Title } = Typography
-const randomSurvey: TSurvey =
+const randomSurvey: Survey =
   surveySamples[Math.floor(Math.random() * surveySamples.length)]
 
 const App = (): JSX.Element => {
@@ -35,7 +37,7 @@ const App = (): JSX.Element => {
         }
       )
     } catch (e) {
-      console.error(e)
+      await message.error(getRpcErrorMsg(e), 3)
     } finally {
       setIsSubmitting(false)
     }
@@ -43,31 +45,17 @@ const App = (): JSX.Element => {
 
   return (
     <Page>
-      {connectedAccount === '' ? (
-        <div className='App-content'>
-          <p style={{ color: 'black' }}>
-            Connect your wallet to see the magic!!!
-          </p>
-        </div>
+      {!connectedAccount ? (
+        <Disconnected />
       ) : (
         <div className='App-content'>
           {!surveyInProgress ? (
-            <Space direction='vertical' size='middle'>
-              <Title level={2} style={{ marginBottom: 4, textAlign: 'center' }}>
-                Daily Trivia
-              </Title>
-              <Text>{randomSurvey.title}</Text>
-              <Image width='40vmin' src={randomSurvey.image} preview={false} />
-              <Button
-                type='primary'
-                onClick={() => setSurveyInProgress(true)}
-                style={{ flex: 1 }}
-              >
-                Start Survey
-              </Button>
-            </Space>
+            <SurveyIntro
+              survey={randomSurvey}
+              onStart={() => setSurveyInProgress(true)}
+            />
           ) : (
-            <Survey
+            <DailySurvey
               dataSource={randomSurvey}
               isLoading={isSubmitting}
               onSubmit={async (surveyId, answerIds) =>

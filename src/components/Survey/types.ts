@@ -17,9 +17,3 @@ export interface Survey {
   image: string
   questions: Question[]
 }
-
-export interface SurveyProps {
-  dataSource: Survey
-  isLoading?: boolean
-  onSubmit?: (surveyId: number, answerIds: number[]) => void
-}
