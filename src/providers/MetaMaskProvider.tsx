@@ -8,15 +8,15 @@ import {
 import { message } from "antd";
 import { ethers } from "ethers";
 
-type MetaMaskContextTypes = {
+interface MetaMaskContextTypes {
   ethereum: any;
   isWrongNetwork: boolean;
-  connectedAccount: string;
-  ethBalance: string | undefined;
-  provider: ethers.providers.Web3Provider | undefined;
+  connectedAccount: string | null;
+  ethBalance: string | null;
+  provider: ethers.providers.Web3Provider | null;
   switchToRopsten: () => void;
   connectAccount: () => void;
-};
+}
 
 // See chain ids <https://docs.metamask.io/guide/ethereum-provider.html#chain-ids>
 const ropstenChainId = "0x3";
@@ -26,16 +26,16 @@ const MetaMaskAccountContext = createContext<MetaMaskContextTypes>({
   isWrongNetwork: false,
   connectedAccount: "",
   ethBalance: "",
-  provider: undefined,
+  provider: null,
   switchToRopsten: () => {},
   connectAccount: () => {},
 });
 
-type ProviderProps = {
+interface ProviderProps {
   children?: ReactNode;
-};
+}
 
-const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
+const MetaMaskAccountProvider = ({ children }: ProviderProps): JSX.Element => {
   const { ethereum } = window;
   const defaultProvider = new ethers.providers.Web3Provider(ethereum);
   const [web3Provider, setWeb3Provider] =
@@ -44,37 +44,31 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
   const [connectedAccount, setConnectedAccount] =
     useState<MetaMaskContextTypes["connectedAccount"]>("");
   const [ethBalance, setEthBalance] =
-    useState<MetaMaskContextTypes["ethBalance"]>();
+    useState<MetaMaskContextTypes["ethBalance"]>(null);
 
   useEffect(() => {
-    const listenChainChanges = () => {
-      const handleChainChanged = () => window.location.reload();
-      ethereum.on("chainChanged", handleChainChanged);
-    };
+    const listenChainChanges = (): void => 
+      ethereum.on("chainChanged", window.location.reload());
 
     listenChainChanges();
   }, [ethereum]);
 
   useEffect(() => {
-    const listenAccountChanges = () => {
-      const handleAccountsChanged = () => window.location.reload();
-      ethereum.on("accountsChanged", handleAccountsChanged);
-    };
+    const listenAccountChanges = (): void => 
+      ethereum.on("accountsChanged", window.location.reload());
 
     listenAccountChanges();
   }, [ethereum]);
 
   useEffect(() => {
-    const getConnectedAccount = async () => {
-      const accounts = await ethereum.request({ method: "eth_accounts" });
-      if (accounts && Array.isArray(accounts)) {
-        handleAccounts(accounts);
-      }
+    const getConnectedAccount = async (): Promise<void> => {
+      const accounts = await ethereum.request({ method: "eth_accounts" }) as string[];
+        await handleAccounts(accounts);
     };
 
-    const initializeProvider = async () => {
+    const initializeProvider = async (): Promise<void> => {
       if (!ethereum) {
-        message.info("Make sure you have Metamask installed!");
+        await message.info("Make sure you have Metamask installed!", 3);
         return;
       }
       const provider = new ethers.providers.Web3Provider(ethereum);
@@ -83,14 +77,14 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
       if (chainId !== ropstenChainId) {
         setIsWrongNetwork(true);
       }
-      getConnectedAccount();
+      await getConnectedAccount();
     };
 
     initializeProvider();
   }, [ethereum]);
 
   useEffect(() => {
-    const getAccountBalance = async () => {
+    const getAccountBalance = async (): Promise<void> => {
       if (!web3Provider || !connectedAccount) return;
       const signer = web3Provider.getSigner();
       const ethBalance = await signer.getBalance();
@@ -100,15 +94,15 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
     getAccountBalance();
   }, [web3Provider, connectedAccount]);
 
-  const handleAccounts = (accounts: string[]) => {
+  const handleAccounts = async (accounts: string[]): Promise<void> => {
     if (accounts.length > 0) {
       setConnectedAccount(accounts[0]);
     } else {
-      message.error("No authorized accounts yet");
+      await message.error("No authorized accounts yet");
     }
   };
 
-  const connectAccount = async () => {
+  const connectAccount = async (): Promise<void> => {
     if (!ethereum) {
       return;
     }
@@ -117,14 +111,15 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
         method: "eth_requestAccounts",
       });
       if (accounts && Array.isArray(accounts)) {
-        handleAccounts(accounts);
+        await handleAccounts(accounts);
       }
     } catch (e) {
-      throw e;
+      console.log(e);
+      
     }
   };
 
-  const switchToRopsten = async () => {
+  const switchToRopsten = async (): Promise<void> => {
     await ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: ropstenChainId }],
@@ -132,7 +127,7 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
   };
 
   const value = {
-    ethereum: ethereum,
+    ethereum,
     isWrongNetwork,
     connectedAccount,
     ethBalance,
@@ -148,7 +143,7 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps) => {
   );
 };
 
-export const useMetaMaskAccount = () => {
+export const useMetaMaskAccount = (): MetaMaskContextTypes => {
   return useContext(MetaMaskAccountContext);
 };
 

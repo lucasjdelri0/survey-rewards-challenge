@@ -9,16 +9,15 @@ import {
 } from "antd";
 import { SurveyProps } from "./Survey.props";
 import "./Survey.css";
-import { useMetaMaskAccount } from "providers/MetaMaskProvider";
 
 const { Step } = Steps;
 const { Title } = Typography;
 
-export const Survey: React.FC<SurveyProps> = ({
+export const Survey = ({
   dataSource,
   isLoading = false,
   onSubmit,
-}) => {
+}: SurveyProps): JSX.Element => {
   const [current, setCurrent] = useState(0);
   const [value, setValue] = useState(0);
   const [answerIds, setAnswerIds] = useState<number[]>([]);
@@ -27,7 +26,7 @@ export const Survey: React.FC<SurveyProps> = ({
   const currentQuestion = questions.find(({ id }) => id === current);
 
   useEffect(() => {
-    const next = () => {
+    const next = (): void => {
       setValue(0);
       setCurrent(current + 1);
     };
@@ -44,7 +43,7 @@ export const Survey: React.FC<SurveyProps> = ({
     }
   }, [current, questions]);
 
-  const onChange = (e: RadioChangeEvent) => {
+  const onChange = (e: RadioChangeEvent): void => {
     answerIds.pop();
     setValue(e.target.value);
     setAnswerIds([...answerIds, e.target.value]);
@@ -79,7 +78,7 @@ export const Survey: React.FC<SurveyProps> = ({
             <Button
               type="primary"
               loading={isLoading}
-              onClick={() => onSubmit && onSubmit(surveyId, answerIds)}
+              onClick={() =>  onSubmit?.(surveyId, answerIds)}
               style={{ width: "100%" }}
             >
               Submit

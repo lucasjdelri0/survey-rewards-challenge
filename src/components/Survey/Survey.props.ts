@@ -1,22 +1,22 @@
-export type Option = {
+export interface Option {
   id: number;
   text: string;
-};
+}
 
-export type Question = {
+export interface Question {
   id: number;
   text: string;
   image: string;
   lifetimeSeconds: number;
   options: Option[];
-};
+}
 
-export type Survey = {
+export interface Survey {
   id: number;
   title: string;
   image: string;
   questions: Question[];
-};
+}
 
 export interface SurveyProps {
   dataSource: Survey;

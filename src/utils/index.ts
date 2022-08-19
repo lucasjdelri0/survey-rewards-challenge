@@ -10,7 +10,7 @@ export const shortenAddress = (address: string, chars = 4): string => {
   )}`;
 };
 
-export const roundToTwo = (num: number | string | undefined) => {
+export const roundToTwo = (num: number | string | null): number | undefined => {
   if (!num) {
     return;
   }

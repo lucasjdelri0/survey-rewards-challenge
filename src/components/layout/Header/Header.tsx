@@ -29,7 +29,7 @@ const { Header: AntHeader } = Layout;
 const { Link: AntLink, Title } = Typography;
 
 export const Header = (props: HeaderProps): JSX.Element => {
-  const [quizBalance, setQuizBalance] = useState<string | undefined>();
+  const [quizBalance, setQuizBalance] = useState<string | null>();
   const { backgroundColor, repoHref, avatarImageSrc } = props;
   const {
     connectedAccount,
@@ -44,18 +44,24 @@ export const Header = (props: HeaderProps): JSX.Element => {
   const quizContract = getQuizContract(signer);
 
   useEffect(() => {
-    const getContractInfo = async () => {
-      const symbol = await quizContract.symbol();
-      const balanceBN = await quizContract.balanceOf(connectedAccount);
-      const balance = ethers.utils.formatEther(balanceBN);
-      setQuizBalance(`${balance} ${symbol}`);
+    const getContractInfo = async (): Promise<void> => {
+      try {
+        const symbol = await quizContract.symbol() as string;
+        const balanceBN = await quizContract.balanceOf(connectedAccount);
+        const balance = ethers.utils.formatEther(balanceBN);
+        setQuizBalance(`${balance} ${symbol}`);
+      }
+      catch (e) {
+
+      }
     };
 
-    if (!quizBalance) {
-      getContractInfo();
+    if (quizBalance == null) {
+      void getContractInfo();
     }
   }, [connectedAccount, quizContract, quizBalance]);
 
+  
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     message.info("Click on menu item");
   };
@@ -65,7 +71,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
       onClick={handleMenuClick}
       items={[
         {
-          label: `Balance: ${roundToTwo(ethBalance)} rETH`,
+          label: `Balance: ${roundToTwo(ethBalance) ?? ''} rETH`,
           key: "0",
           icon: <SketchOutlined />,
         },
