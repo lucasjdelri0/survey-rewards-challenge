@@ -30,7 +30,7 @@ const App = (): JSX.Element => {
       const tx = await quizContract.submit(surveyId, answerIds)
       await tx.wait()
       await message.success(
-        'Your answers were successfully submited',
+        'Your survey was sent successfully. You´ve been rewarded with 1 QUIZ.',
         3,
         () => {
           setSurveyInProgress(false)

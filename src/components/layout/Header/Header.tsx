@@ -49,7 +49,9 @@ export const Header = (props: HeaderProps): JSX.Element => {
         const symbol = (await quizContract.symbol()) as string
         const balanceBN = await quizContract.balanceOf(connectedAccount)
         const balance = ethers.utils.formatEther(balanceBN)
-        setQuizBalance(`${balance} ${symbol}`)
+        const balanceToShow =
+          +balance % 1 === 0 ? parseInt(balance) : roundToTwo(balance)
+        setQuizBalance(`${balanceToShow ?? ''} ${symbol}`)
         console.log('quizBalance', quizBalance)
       } catch (e) {
         await message.error(getRpcErrorMsg(e), 3)
@@ -59,23 +61,13 @@ export const Header = (props: HeaderProps): JSX.Element => {
     if (connectedAccount && quizContract) getContractInfo()
   }, [connectedAccount, quizContract])
 
-  const handleMenuClick: MenuProps['onClick'] = async (e) => {
-    await message.info('Click on menu item')
-  }
-
   const menu = (
     <Menu
-      onClick={handleMenuClick}
       items={[
         {
           label: `Balance: ${roundToTwo(ethBalance) ?? ''} rETH`,
           key: '0',
           icon: <SketchOutlined />,
-        },
-        {
-          label: 'Copy wallet address',
-          key: '1',
-          icon: <CopyOutlined />,
         },
       ]}
     />
