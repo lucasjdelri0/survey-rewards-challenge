@@ -50,7 +50,6 @@ export const Header = (props: HeaderProps): JSX.Element => {
         const balanceToShow =
           +balance % 1 === 0 ? parseInt(balance) : roundToTwo(balance)
         setQuizBalance(`${balanceToShow ?? ''} ${symbol}`)
-        console.log('quizBalance', quizBalance)
       } catch (e) {
         await message.error(getRpcErrorMsg(e), 3)
       }
