@@ -1,4 +1,4 @@
-import { Question } from 'components/types'
+import { Question } from 'components/survey/types'
 
 export interface SurveyOverviewProps {
   surveyId: number
