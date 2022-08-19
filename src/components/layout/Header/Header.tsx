@@ -7,14 +7,12 @@ import {
   Avatar,
   Typography,
   Dropdown,
-  MenuProps,
   message,
 } from 'antd'
 import {
   GithubOutlined,
   WalletOutlined,
   WarningOutlined,
-  CopyOutlined,
   SketchOutlined,
 } from '@ant-design/icons'
 import { useMetaMaskAccount } from 'providers/MetaMaskProvider'
@@ -52,7 +50,6 @@ export const Header = (props: HeaderProps): JSX.Element => {
         const balanceToShow =
           +balance % 1 === 0 ? parseInt(balance) : roundToTwo(balance)
         setQuizBalance(`${balanceToShow ?? ''} ${symbol}`)
-        console.log('quizBalance', quizBalance)
       } catch (e) {
         await message.error(getRpcErrorMsg(e), 3)
       }

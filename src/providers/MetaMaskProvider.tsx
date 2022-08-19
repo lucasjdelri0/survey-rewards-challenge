@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { message } from 'antd'
 import { ethers } from 'ethers'
+import { getRpcErrorMsg } from 'utils'
 
 interface MetaMaskContextTypes {
   ethereum: any
@@ -80,7 +81,9 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps): JSX.Element => {
           setIsWrongNetwork(true)
         }
         await getConnectedAccount()
-      } catch (e) {}
+      } catch (e) {
+        await message.error(getRpcErrorMsg(e), 3)
+      }
     }
 
     initializeProvider()
@@ -93,7 +96,9 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps): JSX.Element => {
         const signer = web3Provider.getSigner()
         const ethBalance = await signer.getBalance()
         setEthBalance(ethers.utils.formatEther(ethBalance))
-      } catch (e) {}
+      } catch (e) {
+        await message.error(getRpcErrorMsg(e), 3)
+      }
     }
 
     getAccountBalance()
@@ -119,7 +124,7 @@ const MetaMaskAccountProvider = ({ children }: ProviderProps): JSX.Element => {
         await handleAccounts(accounts)
       }
     } catch (e) {
-      console.log(e)
+      await message.error(getRpcErrorMsg(e), 3)
     }
   }
 
